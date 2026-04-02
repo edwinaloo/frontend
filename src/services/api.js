@@ -23,3 +23,26 @@ export const getDashboard = async (token) => {
 
   return res.json();
 };
+
+export const getCourses = async (token) => {
+  const res = await fetch(`${API_URL}/courses/`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return res.json();
+};
+
+export const createCourse = async (token, title) => {
+  const res = await fetch("http://127.0.0.1:5000/courses/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ title })
+  });
+
+  return res.json();
+};
