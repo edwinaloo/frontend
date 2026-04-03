@@ -56,3 +56,16 @@ export const getAssignments = async (token, courseId) => {
 
   return res.json();
 }
+
+export const createAssignment = async (token, courseId, title) => {
+  const res = await fetch(`${API_URL}/courses/${courseId}/assignments/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ title })
+  });
+
+  return res.json();
+};

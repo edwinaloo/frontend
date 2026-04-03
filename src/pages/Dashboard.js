@@ -4,6 +4,7 @@ import {
   getCourses,
   createCourse,
   getAssignments,
+  createAssignment,
 } from "../services/api";
 
 export default function Dashboard() {
@@ -12,6 +13,7 @@ export default function Dashboard() {
   const [assignments, setAssignments] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [title, setTitle] = useState("");
+  const [assignmentTitle, setAssignmentTitle] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -85,6 +87,19 @@ export default function Dashboard() {
     }
   };
 
+  // ✅ Create assignment (not shown in UI yet)
+  const handleCreateAssignment = async () => {
+    if (!assignmentTitle || !selectedCourse) return;
+
+    try {
+      await createAssignment(token, selectedCourse, assignmentTitle);
+      setAssignmentTitle("");
+      handleCourseClick(selectedCourse); // refresh
+    } catch (err) {
+      console.error("Error creating assignment:", err);
+    }
+  };
+
   if (!data) return <p>Loading...</p>;
 
   return (
@@ -135,6 +150,14 @@ export default function Dashboard() {
           )}
         </div>
       )}
+      <h3>Add Assignment</h3>
+      <input
+        value={assignmentTitle}
+        onChange={(e) => setAssignmentTitle(e.target.value)}
+        placeholder="Assignment name"
+      />
+      <button onClick={handleCreateAssignment}>Add</button>
+
 
       <br />
       <button onClick={handleLogout}>Logout</button>
