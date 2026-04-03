@@ -46,3 +46,13 @@ export const createCourse = async (token, title) => {
 
   return res.json();
 };
+
+export const getAssignments = async (token, courseId) => {
+  const res = await fetch(`${API_URL}/courses/${courseId}/assignments/`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return res.json();
+}
