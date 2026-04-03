@@ -48,7 +48,7 @@ export const createCourse = async (token, title) => {
 };
 
 export const getAssignments = async (token, courseId) => {
-  const res = await fetch(`${API_URL}/courses/${courseId}/assignments/`, {
+  const res = await fetch(`${API_URL}/assignments/course/${courseId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -58,7 +58,7 @@ export const getAssignments = async (token, courseId) => {
 }
 
 export const createAssignment = async (token, courseId, title) => {
-  const res = await fetch(`${API_URL}/courses/${courseId}/assignments/`, {
+  const res = await fetch(`${API_URL}/assignments/course/${courseId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
