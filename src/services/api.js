@@ -80,3 +80,14 @@ export const toggleAssignment = async (token, assignmentId) => {
 
   return res.json();
 };
+
+export const deleteAssignment = async (token, assignmentId) => {
+  const res = await fetch(`${API_URL}/assignments/${assignmentId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return res.json();
+};

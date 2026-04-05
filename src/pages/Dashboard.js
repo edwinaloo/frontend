@@ -6,6 +6,7 @@ import {
   getAssignments,
   createAssignment,
   toggleAssignment,
+  deleteAssignment,
 } from "../services/api";
 
 export default function Dashboard() {
@@ -44,7 +45,6 @@ export default function Dashboard() {
       try {
         const dash = await getDashboard(token);
         setData(dash);
-
         await loadCourses();
       } catch (err) {
         console.error("Error fetching dashboard:", err);
@@ -60,7 +60,7 @@ export default function Dashboard() {
     try {
       await createCourse(token, title);
       setTitle("");
-      loadCourses();
+      await loadCourses();
     } catch (err) {
       console.error("Error creating course:", err);
     }
@@ -90,7 +90,7 @@ export default function Dashboard() {
     try {
       await createAssignment(token, selectedCourse, assignmentTitle);
       setAssignmentTitle("");
-      handleCourseClick(selectedCourse);
+      await handleCourseClick(selectedCourse);
     } catch (err) {
       console.error("Error creating assignment:", err);
     }
@@ -99,9 +99,18 @@ export default function Dashboard() {
   const handleToggle = async (id) => {
     try {
       await toggleAssignment(token, id);
-      handleCourseClick(selectedCourse);
+      await handleCourseClick(selectedCourse);
     } catch (err) {
       console.error("Error toggling assignment:", err);
+    }
+  };
+
+  const handleDeleteAssignment = async (id) => {
+    try {
+      await deleteAssignment(token, id);
+      await handleCourseClick(selectedCourse);
+    } catch (err) {
+      console.error("Error deleting assignment:", err);
     }
   };
 
@@ -148,7 +157,15 @@ export default function Dashboard() {
 
           {Array.isArray(assignments) && assignments.length > 0 ? (
             assignments.map((a) => (
-              <div key={a.id}>
+              <div
+                key={a.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  marginBottom: "8px",
+                }}
+              >
                 <span
                   onClick={() => handleToggle(a.id)}
                   style={{
@@ -158,6 +175,10 @@ export default function Dashboard() {
                 >
                   {a.title}
                 </span>
+
+                <button onClick={() => handleDeleteAssignment(a.id)}>
+                  Delete
+                </button>
               </div>
             ))
           ) : (
