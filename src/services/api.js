@@ -69,3 +69,14 @@ export const createAssignment = async (token, courseId, title) => {
 
   return res.json();
 };
+
+export const toggleAssignment = async (token, assignmentId) => {
+  const res = await fetch(`${API_URL}/assignments/${assignmentId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return res.json();
+};

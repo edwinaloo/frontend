@@ -5,6 +5,7 @@ import {
   createCourse,
   getAssignments,
   createAssignment,
+  toggleAssignment,
 } from "../services/api";
 
 export default function Dashboard() {
@@ -22,7 +23,6 @@ export default function Dashboard() {
     window.location.reload();
   };
 
-  // ✅ Stable function (fixes ESLint warning)
   const loadCourses = useCallback(async () => {
     try {
       const res = await getCourses(token);
@@ -39,7 +39,6 @@ export default function Dashboard() {
     }
   }, [token]);
 
-  // ✅ Fetch dashboard + courses
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,20 +54,18 @@ export default function Dashboard() {
     if (token) fetchData();
   }, [token, loadCourses]);
 
-  // ✅ Create course
   const handleCreate = async () => {
     if (!title) return;
 
     try {
       await createCourse(token, title);
       setTitle("");
-      loadCourses(); // refresh
+      loadCourses();
     } catch (err) {
       console.error("Error creating course:", err);
     }
   };
 
-  // ✅ Click course → load assignments
   const handleCourseClick = async (courseId) => {
     setSelectedCourse(courseId);
 
@@ -87,16 +84,24 @@ export default function Dashboard() {
     }
   };
 
-  // ✅ Create assignment (not shown in UI yet)
   const handleCreateAssignment = async () => {
     if (!assignmentTitle || !selectedCourse) return;
 
     try {
       await createAssignment(token, selectedCourse, assignmentTitle);
       setAssignmentTitle("");
-      handleCourseClick(selectedCourse); // refresh
+      handleCourseClick(selectedCourse);
     } catch (err) {
       console.error("Error creating assignment:", err);
+    }
+  };
+
+  const handleToggle = async (id) => {
+    try {
+      await toggleAssignment(token, id);
+      handleCourseClick(selectedCourse);
+    } catch (err) {
+      console.error("Error toggling assignment:", err);
     }
   };
 
@@ -143,21 +148,31 @@ export default function Dashboard() {
 
           {Array.isArray(assignments) && assignments.length > 0 ? (
             assignments.map((a) => (
-              <p key={a.id}>{a.title}</p>
+              <div key={a.id}>
+                <span
+                  onClick={() => handleToggle(a.id)}
+                  style={{
+                    textDecoration: a.completed ? "line-through" : "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  {a.title}
+                </span>
+              </div>
             ))
           ) : (
             <p>No assignments found</p>
           )}
+
+          <h3>Add Assignment</h3>
+          <input
+            value={assignmentTitle}
+            onChange={(e) => setAssignmentTitle(e.target.value)}
+            placeholder="Assignment name"
+          />
+          <button onClick={handleCreateAssignment}>Add</button>
         </div>
       )}
-      <h3>Add Assignment</h3>
-      <input
-        value={assignmentTitle}
-        onChange={(e) => setAssignmentTitle(e.target.value)}
-        placeholder="Assignment name"
-      />
-      <button onClick={handleCreateAssignment}>Add</button>
-
 
       <br />
       <button onClick={handleLogout}>Logout</button>
