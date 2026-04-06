@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [title, setTitle] = useState("");
   const [assignmentTitle, setAssignmentTitle] = useState("");
+  const [assignmentDeadline, setAssignmentDeadline] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -88,8 +89,14 @@ export default function Dashboard() {
     if (!assignmentTitle || !selectedCourse) return;
 
     try {
-      await createAssignment(token, selectedCourse, assignmentTitle);
+      await createAssignment(
+        token, 
+        selectedCourse, 
+        assignmentTitle, 
+        assignmentDeadline
+      );
       setAssignmentTitle("");
+      setAssignmentDeadline("");
       await handleCourseClick(selectedCourse);
     } catch (err) {
       console.error("Error creating assignment:", err);
@@ -176,6 +183,9 @@ export default function Dashboard() {
                   {a.title}
                 </span>
 
+                <span>{a.deadline ? `Due: ${a.deadline}` : 'No deadline'}</span>
+                {a.is_overdue && <span>Overdue</span>}
+
                 <button onClick={() => handleDeleteAssignment(a.id)}>
                   Delete
                 </button>
@@ -187,9 +197,10 @@ export default function Dashboard() {
 
           <h3>Add Assignment</h3>
           <input
-            value={assignmentTitle}
-            onChange={(e) => setAssignmentTitle(e.target.value)}
-            placeholder="Assignment name"
+            type="date"
+            value={assignmentDeadline}
+            onChange={(e) => setAssignmentDeadline(e.target.value)}
+            placeholder="Deadline"
           />
           <button onClick={handleCreateAssignment}>Add</button>
         </div>
